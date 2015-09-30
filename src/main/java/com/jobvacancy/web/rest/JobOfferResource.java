@@ -112,4 +112,20 @@ public class JobOfferResource {
         jobOfferRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("jobOffer", id.toString())).build();
     }
+
+
+    /**
+     * GET  /jobOffers -> get all the jobOffers.
+     */
+    @RequestMapping(value = "/offers",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<JobOffer>> getAllOffers(Pageable pageable)
+            throws URISyntaxException {
+        Page<JobOffer> page = jobOfferRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/offers");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
 }
