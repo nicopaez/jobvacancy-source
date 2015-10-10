@@ -2,7 +2,10 @@ package com.jobvacancy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.jobvacancy.domain.JobOffer;
+import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.JobOfferRepository;
+import com.jobvacancy.repository.UserRepository;
+import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import com.jobvacancy.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -34,6 +37,9 @@ public class JobOfferResource {
     @Inject
     private JobOfferRepository jobOfferRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /jobOffers -> Create a new jobOffer.
      */
@@ -46,6 +52,9 @@ public class JobOfferResource {
         if (jobOffer.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new jobOffer cannot already have an ID").body(null);
         }
+        String currentLogin = SecurityUtils.getCurrentLogin();
+        Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);
+        jobOffer.setOwner(currentUser.get());
         JobOffer result = jobOfferRepository.save(jobOffer);
         return ResponseEntity.created(new URI("/api/jobOffers/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert("jobOffer", result.getId().toString()))

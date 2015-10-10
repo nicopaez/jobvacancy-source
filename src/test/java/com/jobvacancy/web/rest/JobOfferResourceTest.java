@@ -1,19 +1,33 @@
 package com.jobvacancy.web.rest;
 
 import com.jobvacancy.Application;
+import com.jobvacancy.domain.Authority;
 import com.jobvacancy.domain.JobOffer;
+import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.JobOfferRepository;
 
+import com.jobvacancy.repository.UserRepository;
+import com.jobvacancy.security.AuthoritiesConstants;
+import com.jobvacancy.service.MailService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
+
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -23,9 +37,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,6 +67,15 @@ public class JobOfferResourceTest {
     private static final String UPDATED_DESCRIPTION = "UPDATED_TEXT";
 
     @Inject
+    private PasswordEncoder passwordEncoder;
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Mock
+    private UserRepository mockUserRepository;
+
+    @Inject
     private JobOfferRepository jobOfferRepository;
 
     @Inject
@@ -60,16 +87,25 @@ public class JobOfferResourceTest {
     private MockMvc restJobOfferMockMvc;
 
     private JobOffer jobOffer;
+    private User user;
+
 
     @PostConstruct
     public void setup() {
         MockitoAnnotations.initMocks(this);
         JobOfferResource jobOfferResource = new JobOfferResource();
         ReflectionTestUtils.setField(jobOfferResource, "jobOfferRepository", jobOfferRepository);
+
+        // TODO: this should be refactored in a based class because is a common concern
+        Optional<User> user =  userRepository.findOneByLogin("user");
+        when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
+
+        ReflectionTestUtils.setField(jobOfferResource, "userRepository", mockUserRepository);
         this.restJobOfferMockMvc = MockMvcBuilders.standaloneSetup(jobOfferResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();
     }
+
 
     @Before
     public void initTest() {
@@ -77,6 +113,27 @@ public class JobOfferResourceTest {
         jobOffer.setTitle(DEFAULT_TITLE);
         jobOffer.setLocation(DEFAULT_LOCATION);
         jobOffer.setDescription(DEFAULT_DESCRIPTION);
+    }
+
+    public static class MockSecurityContext implements SecurityContext {
+
+        private static final long serialVersionUID = -1386535243513362694L;
+
+        private Authentication authentication;
+
+        public MockSecurityContext(Authentication authentication) {
+            this.authentication = authentication;
+        }
+
+        @Override
+        public Authentication getAuthentication() {
+            return this.authentication;
+        }
+
+        @Override
+        public void setAuthentication(Authentication authentication) {
+            this.authentication = authentication;
+        }
     }
 
     @Test
@@ -170,7 +227,7 @@ public class JobOfferResourceTest {
         jobOffer.setTitle(UPDATED_TITLE);
         jobOffer.setLocation(UPDATED_LOCATION);
         jobOffer.setDescription(UPDATED_DESCRIPTION);
-        
+
 
         restJobOfferMockMvc.perform(put("/api/jobOffers")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
