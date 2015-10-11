@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,6 +84,7 @@ public class JobOfferResource {
     /**
      * GET  /jobOffers -> get all the jobOffers.
      */
+/*
     @RequestMapping(value = "/jobOffers",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,6 +92,94 @@ public class JobOfferResource {
     public ResponseEntity<List<JobOffer>> getAllJobOffers(Pageable pageable)
         throws URISyntaxException {
         Page<JobOffer> page = jobOfferRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/jobOffers");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+*/
+
+    @RequestMapping(value = "/jobOffers",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<JobOffer>> getAllJobOffers(Pageable pageable)
+        throws URISyntaxException {
+        List<JobOffer> list = jobOfferRepository.findByOwnerIsCurrentUser();
+        Page<JobOffer> page = new Page<JobOffer>() {
+            @Override
+            public int getTotalPages() {
+                return 1;
+            }
+
+            @Override
+            public long getTotalElements() {
+                return list.size();
+            }
+
+            @Override
+            public int getNumber() {
+                return 0;
+            }
+
+            @Override
+            public int getSize() {
+                return list.size();
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return list.size();
+            }
+
+            @Override
+            public List<JobOffer> getContent() {
+                return list;
+            }
+
+            @Override
+            public boolean hasContent() {
+                return true;
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return true;
+            }
+
+            @Override
+            public boolean isLast() {
+                return true;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public Iterator<JobOffer> iterator() {
+                return list.iterator();
+            }
+        };
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/jobOffers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
