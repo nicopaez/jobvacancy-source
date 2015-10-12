@@ -1,5 +1,6 @@
 package com.jobvacancy.service;
 
+import com.jobvacancy.domain.JobOffer;
 import com.jobvacancy.domain.User;
 import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
@@ -50,6 +51,15 @@ public class MailService {
     @PostConstruct
     public void init() {
         this.from = env.getProperty("mail.from");
+    }
+
+    @Async
+    public void sendApplication(String applicantEmail, JobOffer offer) {
+        this.sendEmail(offer.getOwner().getEmail(),
+            "[JobVacancy] New candidate",
+            "Hi," + applicantEmail + "applied for your offer:" + offer.getTitle(),
+            false,
+            false);
     }
 
     @Async

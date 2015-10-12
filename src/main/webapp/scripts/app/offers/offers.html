@@ -20,7 +20,7 @@
                 <th>Title</th>
                 <th>Location</th>
                 <th>Description</th>
-                <!--<th>Actions</th>-->
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -28,20 +28,20 @@
                 <td>{{jobOffer.title}}</td>
                 <td>{{jobOffer.location}}</td>
                 <td>{{jobOffer.description}}</td>
-                <!--
                 <td>
+                    <!--
                     <button type="submit"
                             ui-sref="jobOffer.detail({id:jobOffer.id})"
                             class="btn btn-info btn-sm">
                         <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span> View</span>
                     </button>
+                    -->
                     <button type="submit"
-                            ui-sref="jobOffer.edit({id:jobOffer.id})"
+                            ui-sref="application({id:jobOffer.id})"
                             class="btn btn-primary btn-sm">
                         <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span> Apply</span>
                     </button>
                 </td>
-                -->
             </tr>
             </tbody>
         </table>

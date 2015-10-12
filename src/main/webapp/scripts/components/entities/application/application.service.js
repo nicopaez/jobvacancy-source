@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('jobvacancyApp')
-    .factory('JobOffer', function ($resource, DateUtils) {
-        return $resource('api/jobOffers/:id', {}, {
+    .factory('Application', function ($resource, DateUtils) {
+        return $resource('api/Application/:id', {}, {
+            /*
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',
@@ -12,17 +13,6 @@ angular.module('jobvacancyApp')
                 }
             },
             'update': { method:'PUT' }
-        });
-    })
-    .factory('Offer', function ($resource, DateUtils) {
-        return $resource('api/offers/:id', {}, {
-            'query': { method: 'GET', isArray: true},
-            'get': {
-                method: 'GET',
-                transformResponse: function (data) {
-                    data = angular.fromJson(data);
-                    return data;
-                }
-            },
+            */
         });
     });
