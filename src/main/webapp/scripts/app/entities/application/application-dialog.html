@@ -4,7 +4,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 ng-click="clear()">&times;</button>
-        <h4 class="modal-title" id="myJobOfferLabel">Create or edit a JobOffer</h4>
+        <h4 class="modal-title" id="myJobOfferLabel">Apply to Offer</h4>
     </div>
     <div class="modal-body">
         <jh-alert-error></jh-alert-error>
@@ -15,28 +15,28 @@
         </div>
 -->
         <div class="form-group">
-            <label for="field_title">Title</label>
-            <input type="text" class="form-control" name="title" id="field_title"
-                    ng-model="jobOffer.title"
+            <label for="field_fullname">Your Full Name</label>
+            <input type="text" class="form-control" name="fullname" id="field_fullname"
+                    ng-model="jobApplication.fullname"
                     required>
-            <div ng-show="editForm.title.$invalid">
+            <div ng-show="editForm.fullname.$invalid">
                 <p class="help-block"
-                    ng-show="editForm.title.$error.required">
+                    ng-show="editForm.fullname.$error.required">
                     This field is required.
                 </p>
             </div>
         </div>
         <div class="form-group">
-            <label for="field_location">Location</label>
-            <input type="text" class="form-control" name="location" id="field_location"
-                    ng-model="jobOffer.location"
-                    >
-        </div>
-        <div class="form-group">
-            <label for="field_description">Description</label>
-            <input type="text" class="form-control" name="description" id="field_description"
-                    ng-model="jobOffer.description"
-                    >
+            <label for="field_email">Your Email</label>
+            <input type="text" class="form-control" name="location" id="field_email"
+                    ng-model="jobApplication.email"
+                    required>
+            <div ng-show="editForm.email.$invalid">
+                <p class="help-block"
+                   ng-show="editForm.email.$error.required">
+                    This field is required.
+                </p>
+            </div>
         </div>
 
     </div>
@@ -45,7 +45,7 @@
             <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
         </button>
         <button type="submit" ng-disabled="editForm.$invalid || editForm.$submitted" class="btn btn-primary">
-            <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Save</span>
+            <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Apply</span>
         </button>
     </div>
 </form>

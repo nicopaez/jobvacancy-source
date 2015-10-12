@@ -23,8 +23,10 @@
         <![endif]-->
         <div ng-show="{{ENV === 'dev'}}" class="development" ng-cloak=""></div>
         <div ui-view="navbar" ng-cloak=""></div>
+
         <div class="container">
             <div ui-view="content"></div>
+
             <div class="footer">
                 <p>Job Vacancy Board by NicoPaez | 2015</p>
             </div>
@@ -140,6 +142,14 @@
     <script src="scripts/app/entities/jobOffer/jobOffer-dialog.controller.js"></script>
     <script src="scripts/app/entities/jobOffer/jobOffer-detail.controller.js"></script>
     <script src="scripts/components/entities/jobOffer/jobOffer.service.js"></script>
-    <!-- endbuild -->
+
+    <script src="scripts/app/offers/offers.js"></script>
+    <script src="scripts/app/offers/offers.controller.js"></script>
+
+    <script src="scripts/app/entities/application/application-dialog.controller.js"></script>
+    <script src="scripts/components/entities/application/application.service.js"></script>
+
+
+        <!-- endbuild -->
 </body>
 </html>
